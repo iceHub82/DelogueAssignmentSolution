@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  db:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: delogue_db
+    environment:
+      - MSSQL_SA_PASSWORD=Your_strong_(!)Password
+      - ACCEPT_EULA=Y
+    ports:
+      - "1433:1433"
+    networks:
+      - delogue_network
+    volumes:
+      - ./Data/db:/var/opt/mssql/data
+
+  api:
+    container_name: delogue_api
+    build:
+      context: .
+      dockerfile: ./DelogueAssignment.Api/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=MyProjectDb;User=SA;Password=Your_strong_(!)Password;TrustServerCertificate=True;
+    depends_on:
+      - db
+    networks:
+      - delogue_network
+
+networks:
+  delogue_network:
+    driver: bridge

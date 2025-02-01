@@ -1,0 +1,45 @@
+# --- General .NET Ignore Patterns ---
+bin/
+obj/
+*.user
+*.suo
+*.vsp
+*.ncb
+*.cache
+*.pdb
+*.exe
+*.dll
+*.log
+*.tmp
+*.bak
+*.swp
+
+# --- IDE Specific ---
+.vscode/
+*.sln.DotSettings.user
+*.sln.iml
+.idea/
+*.vs/
+*.csproj.user
+*.ncrunch*
+*.coverage*
+*.testsettings
+*.runsettings
+*.tmproj
+.project
+
+# --- MacOS Specific ---
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- SQL Server Database Files ---
+Data/db
+
+# --- Dependency Management ---
+/packages/
+.nuget/
+project.lock.json
+project.assets.json
+*.nuget.props
+*.nuget.targets
