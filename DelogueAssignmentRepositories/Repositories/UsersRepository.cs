@@ -1,6 +1,8 @@
-﻿using DelogueAssignment.Entities;
-using DelogueAssignment.Data.Interfaces;
+﻿using System.Linq.Dynamic.Core;
+using Microsoft.EntityFrameworkCore;
 using DelogueAssignment.Models;
+using DelogueAssignment.Entities;
+using DelogueAssignment.Data.Interfaces;
 
 namespace DelogueAssignment.Data.Repositories;
 
@@ -13,7 +15,7 @@ public class UsersRepository : IUsersRepository
         _db = db;
     }
 
-    public async Task<User?> GetByIdAsync(int id)
+    public async Task<User?> GetById(int id)
     {
         return await _db.Users!.FindAsync(id);
     }
@@ -23,13 +25,23 @@ public class UsersRepository : IUsersRepository
         UsersDto dto = new() {
             Users = await _db.Users.Select(u => new UserDto {
                 Id = u.UserId,
-                Name = u.Name
+                Name = u.Name,
+                Email = u.Email
             })
             .OrderBy($"{sort} {dir}")
             .Skip(skip)
             .Take(take)
             .ToListAsync()
         };
+
         return dto;
+    }
+
+    public async Task<bool> Add(string name, string email)
+    {
+        await _db.Users.AddAsync(new User { Name = name, Email = email});
+        var result = await _db.SaveChangesAsync();
+
+        return result > 0;
     }
 }

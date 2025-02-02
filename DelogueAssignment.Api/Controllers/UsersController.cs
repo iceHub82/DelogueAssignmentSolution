@@ -1,55 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using DelogueAssignment.Models;
 using DelogueAssignment.Data.Interfaces;
-using DelogueAssignment.Data.Repositories;
 
 namespace DelogueAssignment.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(IUsersRepository usersRepo) : ControllerBase
 {
-    private readonly IUsersRepository _userRepo;
-
-    public UsersController(IUsersRepository userRepo)
-    {
-        _userRepo = userRepo;
-    }
+    private readonly IUsersRepository _usersRepo = usersRepo;
+    private readonly ILogger<UsersController>? _logger;
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id)
     {
-        var user = await _userRepo.GetByIdAsync(id);
+        try
+        {
+            var user = await _usersRepo.GetById(id);
 
-        return user is not null ? Ok(user) : NotFound();
+            return user is not null ? Ok(user) : NotFound();
+        }
+        catch (Exception ex)
+        {
+            _logger!.LogError(ex.Message);
+            return StatusCode(500);
+        }
     }
 
-    //// Public - Anyone with a valid token can read
     [HttpGet]
-    [Authorize(Policy = "ReadOnly")]
-    public IActionResult GetPaginatedUsers(int take, int skip, string sort, string dir)
+    public async Task<IActionResult> GetPaginatedUsers(int take, int skip, string sort, string dir)
     {
-        return Ok();
+        try
+        {
+            var users = await _usersRepo.Users(take, skip, sort, dir);
+
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            _logger!.LogError(ex.Message);
+            return StatusCode(500);
+        }
     }
 
-    //// User - Can write (create new tasks)
-    //[HttpPost]
-    //[Authorize(Policy = "UserWrite")]
-    //public IActionResult CreateTask([FromBody] string task)
-    //{
-    //    Tasks.Add(task);
-    //    return Ok("Task Created");
-    //}
+    [HttpPost("Create")]
+    [Authorize(Policy = "Admin")]
+    public async Task<IActionResult> CreateUser([FromBody] UserDto dto)
+    {
+        try
+        {
+            if (!await _usersRepo.Add(dto.Name!, dto.Email!))
+                throw new Exception("Error creating user"); 
 
-    //// Admin - Full access
-    //[HttpDelete("{index}")]
-    //[Authorize(Policy = "Admin")]
-    //public IActionResult DeleteTask(int index)
-    //{
-    //    if (index < 0 || index >= Tasks.Count)
-    //        return BadRequest("Invalid index");
-
-    //    Tasks.RemoveAt(index);
-    //    return Ok("Task Deleted");
-    //}
+            return Ok("User Created");
+        }
+        catch (Exception ex)
+        {
+            _logger!.LogError(ex.Message);
+            return StatusCode(500);
+        }
+    }
 }
