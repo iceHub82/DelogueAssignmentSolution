@@ -37,9 +37,9 @@ public class UsersRepository : IUsersRepository
         return dto;
     }
 
-    public async Task<bool> Add(string name, string email)
+    public async Task<bool> Add(int id, string name, string email)
     {
-        await _db.Users.AddAsync(new User { Name = name, Email = email});
+        await _db.Users.AddAsync(new User { UserId = id, Name = name, Email = email});
         var result = await _db.SaveChangesAsync();
 
         return result > 0;

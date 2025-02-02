@@ -8,10 +8,16 @@ namespace DelogueAssignment.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUsersRepository usersRepo) : ControllerBase
+public class UsersController : ControllerBase
 {
-    private readonly IUsersRepository _usersRepo = usersRepo;
+    private readonly IUsersRepository _usersRepo;
     private readonly ILogger<UsersController>? _logger;
+
+    public UsersController(IUsersRepository userRepo, ILogger<UsersController>? logger)
+    {
+        _usersRepo = userRepo;
+        _logger = logger;
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id)
@@ -51,7 +57,7 @@ public class UsersController(IUsersRepository usersRepo) : ControllerBase
     {
         try
         {
-            if (!await _usersRepo.Add(dto.Name!, dto.Email!))
+            if (!await _usersRepo.Add(dto.Id, dto.Name!, dto.Email!))
                 throw new Exception("Error creating user"); 
 
             return Ok("User Created");

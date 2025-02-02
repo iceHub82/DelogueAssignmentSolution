@@ -7,5 +7,5 @@ public interface IUsersRepository
 {
     Task<User?> GetById(int id);
     Task<UsersDto> Users(int take, int skip, string sort, string dir);
-    Task<bool> Add(string name, string email);
+    Task<bool> Add(int id, string name, string email);
 }

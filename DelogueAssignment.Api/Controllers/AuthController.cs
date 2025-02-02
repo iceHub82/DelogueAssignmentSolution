@@ -33,7 +33,6 @@ public class AuthController : ControllerBase
         var issuer = _config["JwtSettings:Issuer"];
 
         var claims = new List<Claim> {
-            //new Claim(JwtRegisteredClaimNames.Sub, "testuser"),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Role, request.Role),
             new Claim("scope", "read")
