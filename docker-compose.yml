@@ -21,7 +21,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=db;Database=MyProjectDb;User=SA;Password=Your_strong_(!)Password;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=db;Database=delogue;User=SA;Password=Your_strong_(!)Password;TrustServerCertificate=True;
     depends_on:
       - db
     networks:
