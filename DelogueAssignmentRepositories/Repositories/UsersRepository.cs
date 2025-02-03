@@ -6,14 +6,9 @@ using DelogueAssignment.Data.Interfaces;
 
 namespace DelogueAssignment.Data.Repositories;
 
-public class UsersRepository : IUsersRepository
+public class UsersRepository(DelogueDbContext db) : IUsersRepository
 {
-    private readonly DelogueDbContext _db;
-
-    public UsersRepository(DelogueDbContext db)
-    {
-        _db = db;
-    }
+    private readonly DelogueDbContext _db = db;
 
     public async Task<User?> GetById(int id)
     {
